@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short URL Maker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        h2 {
+            color: #007bff;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .short-url {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #007bff;
+            cursor: pointer;
+            word-break: break-word;
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Short URL Maker</h2>
+        <input type="text" id="originalUrl" placeholder="Enter URL">
+        <button onclick="generateShortUrl()">Shorten</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function generateShortUrl() {
+            const originalUrl = document.getElementById('originalUrl').value.trim();
+            if (!originalUrl) {
+                alert("Please enter a URL");
+                return;
+            }
+            
+            const shortCode = Math.random().toString(36).substring(2, 8);
+            localStorage.setItem(shortCode, originalUrl);
+            
+            const shortUrl = window.location.origin + window.location.pathname + '#' + shortCode;
+            document.getElementById('result').innerHTML = `<p class='short-url' onclick='copyToClipboard("${shortUrl}")'>${shortUrl}</p>`;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
+        }
+
+        function redirectIfShortUrl() {
+            const shortCode = window.location.hash.substring(1);
+            if (shortCode) {
+                const originalUrl = localStorage.getItem(shortCode);
+                if (originalUrl) {
+                    window.location.replace(originalUrl);
+                }
+            }
+        }
+
+        window.addEventListener("load", redirectIfShortUrl);
+        window.addEventListener("hashchange", redirectIfShortUrl);
+    </script>
+</body>
+</html>
